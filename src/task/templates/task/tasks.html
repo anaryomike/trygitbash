@@ -1,0 +1,95 @@
+
+{% extends '_layout.html' %}
+{% load humanize %}
+
+{%block title %}
+{{title}}
+{% endblock %}
+
+
+
+
+{% block subtitle %}
+<h3>Task Management</h3>
+<a href="{% url 'task:create_task' %}"  class="btn">New Task</a>
+{{request.user}}
+{% endblock %}
+
+
+{% block content %}
+
+{% block search%}
+
+<form action="" method="GET">
+	<input type="search" name="query" value="{{request.GET.query}}" placeholder="search task by title,priority or status ....">
+	<button class="btn" type="submit">Search</button>
+</form>
+{% endblock%}
+
+
+{% if tasks %}
+<span>Tasks Total : {{ tasks.count }}</span>
+<table class="striped centered z-depth-2" >
+		        <thead>
+		          <tr>
+		              <th>Name</th>
+		              <th>Priority</th>
+		              <th>Task Duration</th>
+		              <th>Completed</th>
+		              <th>Cancelled</th>
+		              <th>Start Date</th>
+		              <th>Due Date</th>
+		              <th>Created </th>
+		              <th>Updated </th>
+		              <th>Actions</th>
+
+		          </tr>
+		        </thead>
+
+		        <tbody>
+		        {% for task in tasks %} 
+		    
+		          <tr>
+		          	<td>{{ task.name}}</td>
+		          	<td>{{ task.priority}}</td>
+
+		          	{% if task.is_due %}
+		          	<td style="color:red">{{ task.task_days_count}}</td>
+		          	{% else %}
+		          	<td style="color:green">{{ task.task_days_count}}</td>
+		          	{% endif %}
+
+		          	<td>{{ task.completed}}</td>
+		          	<td>{{ task.cancelled}}</td>
+		          	<td>{{ task.start}}</td>
+		          	<td>{{ task.end}}</td>
+
+		          	<td style="color:red">{{ task.created}}</td>
+		         
+		          	<td>{{ task.updated|naturaltime}}</td>
+		          	<td>
+
+		          	{% if request.user == task.owner %}
+		          	 <a href="{% url 'task:delete_task' task.id %}">Delete</a> | 
+		          	 <a href="{% url 'task:edit_task' task.id %}">Edit</a> |
+		          	 {% if task.check_approve%}
+		          	 <a href="">unapprove</a> 
+		          	 {% else%}
+		          	 <a href="{% url 'task:approve' task.id %}">approve</a> 
+		          	 {% endif%}
+		          	 {% endif %}
+		          	 <a href="{% url 'task:done' task.id %}">completed</a> |
+		          	 <a href="{% url 'task:detail' task.id %}">detail</a> |
+		          	 
+		          	
+		          	</td>
+		          </tr>
+		          {% endfor %}
+		        </tbody>
+	      </table>
+	      <a href="{% url 'task:delete_all_approved' %}" class="btn">Erase Completed</a>
+{% else %}
+<span>search query <b>{{request.GET.query}}</b>, does not exist in database</span>
+{% endif %}
+
+{% endblock %}

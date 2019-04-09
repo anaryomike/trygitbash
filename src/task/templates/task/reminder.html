@@ -1,0 +1,52 @@
+
+{% extends '_layout.html' %}
+
+{% load humanize %}
+
+{% block subtitle %}
+
+<h3>Task Management</h3>
+
+{% endblock %}
+
+
+
+{% block content %}
+
+
+<span>Tasks This Month (2019) Total : {{ tasks.count }}</span>
+<table class="striped centered z-depth-2" >
+		        <thead>
+		          <tr>
+		              <th>Name</th>
+		              <th>Remain</th>
+		          </tr>
+		        </thead>
+
+		        <tbody>
+		     	{% for task in tasks %}
+		          <tr>
+		          	{% if task.is_due %}
+		          	<td style="">{{task.name}}</td>
+		          	{% else %}
+		          	<td>{{task.name}}</td>
+		          	{% endif %}
+
+
+		          	{% if task.is_due %}
+		          	<td style="">{{ task.task_days_count}}</td>
+		          	{% else %}
+		          	<td>{{ task.task_days_count}}</td>
+		          	{% endif %}
+		        
+		          </tr>
+		         {% endfor %}
+		        </tbody>
+
+		        {% for task in tasks%}
+		        {% if task.task_expired_today%}
+		        <div>{{task.name}} - {{task.priority}}</div>
+		        {% endif %}
+		        {% endfor %}
+	      </table>
+{% endblock %}
